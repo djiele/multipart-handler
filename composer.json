@@ -1,0 +1,13 @@
+{
+    "name": "djiele/multipart",
+    "description": "parse HTTP multipart/form-data request body. Useful PATCH method since PHP doesn't natively handle it yet.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "email": "ojo.djiele@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
