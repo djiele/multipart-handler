@@ -3,19 +3,19 @@ Parse HTTP multipart/form-data request body. Useful for HTTP PATCH method since 
 
 Simple usage:
 
-`
-require_once __DIR__'./vendor/autoload.php';
 
-use djiele\http\MultipartHandler;
+`require_once __DIR__'./vendor/autoload.php';`
 
-$mh = new MultipartHandler();
+`use djiele\http\MultipartHandler;`
 
-$mh->populateGlobals();
+`$mh = new MultipartHandler();`
 
-echo var_export($_POST), PHP_EOL;
+`$mh->populateGlobals();`
 
-echo var_export($_FILES), PHP_EOL;
-`
+`echo var_export($_POST), PHP_EOL;`
+
+`echo var_export($_FILES), PHP_EOL;`
+
 
 Et voilà!
 
