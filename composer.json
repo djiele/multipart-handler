@@ -1,6 +1,6 @@
 {
     "name": "djiele/multipart",
-    "description": "parse HTTP multipart/form-data request body. Useful PATCH method since PHP doesn't natively handle it yet.",
+    "description": "Parse HTTP multipart/form-data request body. Useful for HTTP PATCH method since PHP doesn't natively handle it yet.",
     "type": "library",
     "license": "MIT",
     "authors": [
