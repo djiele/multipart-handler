@@ -8,6 +8,6 @@
             "email": "ojo.djiele@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "dev-master",
     "require": {}
 }
