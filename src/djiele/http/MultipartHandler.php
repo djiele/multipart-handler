@@ -274,7 +274,7 @@ class MultipartHandler
      */
     public static function getHttpContentTypeHeader()
     {
-        foreach (getallheaders() as $kh => $vh) {
+        foreach (\getallheaders() as $kh => $vh) {
             if ('Content-Type' == $kh) {
                 return $vh;
             }
