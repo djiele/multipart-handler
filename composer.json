@@ -5,9 +5,15 @@
     "license": "MIT",
     "authors": [
         {
+            "name": "djiele",
             "email": "ojo.djiele@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
-    "require": {}
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Djiele\\": "src/djiele/"
+        }
+    }
 }
