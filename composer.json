@@ -10,14 +10,10 @@
         }
     ],
     "minimum-stability": "dev",
-<<<<<<< HEAD
     "require": {},
     "autoload": {
         "psr-4": {
             "Djiele\\": "src/djiele/"
         }
     }
-=======
-    "require": {}
->>>>>>> 407ac06ec3948288a225923667340e3dec245bf7
 }
