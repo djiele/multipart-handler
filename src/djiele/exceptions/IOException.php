@@ -1,6 +1,6 @@
 <?php
 
-namespace djiele\exceptions;
+namespace Djiele\Exceptions;
 
 use Exception;
 

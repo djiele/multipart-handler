@@ -1,8 +1,8 @@
 <?php
 
-namespace djiele\http;
+namespace Djiele\Http;
 
-use djiele\exceptions\IOException;
+use Djiele\Exceptions\IOException;
 
 class MultipartHandler
 {
@@ -209,7 +209,7 @@ class MultipartHandler
             }
             fclose($inputStream);
         } else {
-           throw new IOException('Could not open file for reading');
+           throw new IOException('Could not open php://input for reading');
         }
     }
 
@@ -274,7 +274,7 @@ class MultipartHandler
      */
     public static function getHttpContentTypeHeader()
     {
-        foreach (getallheaders() as $kh => $vh) {
+        foreach (\getallheaders() as $kh => $vh) {
             if ('Content-Type' == $kh) {
                 return $vh;
             }
