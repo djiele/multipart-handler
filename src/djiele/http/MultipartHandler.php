@@ -1,8 +1,8 @@
 <?php
 
-namespace djiele\http;
+namespace Djiele\Http;
 
-use djiele\exceptions\IOException;
+use Djiele\Exceptions\IOException;
 
 class MultipartHandler
 {
@@ -15,12 +15,27 @@ class MultipartHandler
      */
     public function __construct()
     {
-
-        $this->boundary = '--' . (explode('=', self::getHttpContentTypeHeader())[1]) . "\r\n";
         $this->files = [];
         $this->vars = [];
+        $tmp = explode('=', self::getHttpContentTypeHeader());
+        if (1<count($tmp)) {
+            $this->boundary = '--' . $tmp[1] . "\r\n";
+            $this->parseRequestBody();
+        } else {
+            $this->boundary = null;
+        }
+    }
 
-        $this->parseRequestBody();
+    /**
+     * Do some cleaning on object destruction
+     */
+    public function __destruct()
+    {
+        foreach ($this->files as $f) {
+            if (is_file($f['tmp_name'])) {
+                unlink($f['tmp_name']);
+            }
+        }
     }
 
     /**
@@ -71,6 +86,12 @@ class MultipartHandler
         foreach ($this->vars as $v) {
             if (preg_match('/^(.*)\[(.*)\]$/', key($v), $matches)) {
                 $varname = self::sanitizeVarname($matches[1]);
+                if (!isset($_POST[$varname])) {
+                    $_POST[$varname] = [];
+                }
+                if (!empty($matches[2])) {
+                    $_POST[$varname][$matches[2]] = [];
+                }
                 if (is_array($_POST[$varname])) {
                     if (empty($matches[2])) {
                         $_POST[$varname][] = current($v);
@@ -94,11 +115,18 @@ class MultipartHandler
     {
         $matches = [];
         foreach ($this->files as $f) {
-            $varname = $f['@_from_input_name'];
-            unset($f['@_from_input_name']);
+            $varname = $f['@_input_name'];
+            unset($f['@_input_name']);
             if (preg_match('/^(.*)\[(.*)\]$/', $varname, $matches)) {
                 $varname = self::sanitizeVarname($matches[1]);
-                if (is_array($_FILES[$varname])) {
+                if (isset($_FILES[$varname]) && !is_array($_FILES[$varname])) {
+                    $tmp = $_FILES[$varname];
+                    $_FILES[$varname] = [];
+                    foreach ($tmp as $k => $v) {
+                        $_FILES[$varname][$k][] = $v;
+                    }
+                }
+                if (isset($_FILES[$varname]) && is_array($_FILES[$varname])) {
                     if ('' == $matches[2]) {
                         foreach ($f as $k => $v) {
                             $_FILES[$varname][$k][] = $v;
@@ -117,7 +145,18 @@ class MultipartHandler
                 }
             } else {
                 $varname = self::sanitizeVarname($varname);
-                $_FILES[$varname] = $f;
+                if (isset($_FILES[$varname]) && 0 !== key($_FILES[$varname])) {
+                    $tmp = $_FILES[$varname];
+                    $_FILES[$varname] = [];
+                    foreach ($tmp as $k => $v) {
+                        $_FILES[$varname][$k][] = $v;
+                    }
+                    foreach ($f as $k => $v) {
+                        $_FILES[$varname][$k][] = $v;
+                    }
+                } else {
+                    $_FILES[$varname] = $f;
+                }
             }
         }
     }
@@ -127,6 +166,9 @@ class MultipartHandler
      */
     protected function parseRequestBody()
     {
+        if (null === $this->boundary) {
+            return;
+        }
         $temporaryFiles = [];
         $boundaryLen = strlen($this->boundary);
         $boundaryEnds = rtrim($this->boundary) . '--' . "\r\n";
@@ -155,13 +197,14 @@ class MultipartHandler
                     if (array_key_exists('filename', $parsedVars)) {
                         ++$fileIndex;
                         $isFileupload = true;
-                        $temporaryFiles[] = tmpfile();
+                        $tempFilename = tempnam(rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR), "php");
+                        $temporaryFiles[] = fopen($tempFilename, 'wb');
                         $this->files[$fileIndex] = [
-                            '@_from_input_name' => $parsedVars['name'],
+                            '@_input_name' => $parsedVars['name'],
                             'name' => $parsedVars['filename'],
                             'type' => (isset($parsedVars['Content-Type']) ? $parsedVars['Content-Type'] : 'application/octet-stream'),
                             'size' => 0,
-                            'tmp_name' => stream_get_meta_data($temporaryFiles[count($temporaryFiles) - 1])['uri'],
+                            'tmp_name' => $tempFilename,
                             'error' => UPLOAD_ERR_NO_FILE,
                         ];
                     } else {
@@ -200,6 +243,9 @@ class MultipartHandler
                                 if ($isFileupload) {
                                     fwrite($temporaryFiles[count($temporaryFiles) - 1], $bytes, strlen($bytes));
                                 } else {
+                                    if (!isset($this->vars[$varIndex][$parsedVars['name']])) {
+                                        $this->vars[$varIndex][$parsedVars['name']] = '';
+                                    }
                                     $this->vars[$varIndex][$parsedVars['name']] .= $bytes;
                                 }
                             }
@@ -274,11 +320,16 @@ class MultipartHandler
      */
     public static function getHttpContentTypeHeader()
     {
-        foreach (getallheaders() as $kh => $vh) {
-            if ('Content-Type' == $kh) {
-                return $vh;
+        if (function_exists('getallheaders')) {
+            foreach (\getallheaders() as $kh => $vh) {
+                if ('Content-Type' == $kh) {
+                    return $vh;
+                }
             }
+        } elseif(isset($_SERVER) && array_key_exists('HTTP_CONTENT_TYPE', $_SERVER)) {
+            return $_SERVER['HTTP_CONTENT_TYPE'];
         }
         return null;
     }
+
 }
