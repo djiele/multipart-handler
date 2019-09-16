@@ -4,7 +4,7 @@
     "type": "library",
     "keywords": [
         "HTTP", "multipart", "form-data", "REST", "Laravel", "Symfony"
-    }
+    ],
     "license": "MIT",
     "authors": [
         {
