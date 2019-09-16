@@ -1,19 +1,23 @@
 {
     "name": "djiele/multipart",
-    "description": "Parse HTTP multipart/form-data request body. Useful for HTTP PATCH method since PHP doesn't natively handle it yet.",
+    "description": "Parse HTTP multipart/form-data request body. Useful for REST APIs.",
     "type": "library",
+    "keywords": [
+        "HTTP", "multipart", "form-data", "REST", "Laravel", "Symfony"
+    }
     "license": "MIT",
     "authors": [
         {
             "name": "djiele",
-            "email": "ojo.djiele@gmail.com"
+            "email": "ojo.djiele@gmail.com",
+            "homepage": "https://www.djiele.net",
         }
     ],
     "minimum-stability": "dev",
     "require": {},
     "autoload": {
         "psr-4": {
-            "djiele\\": "src/djiele/"
+            "Djiele\\": "src/Djiele/"
         }
     }
 }
