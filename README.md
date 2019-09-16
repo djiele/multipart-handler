@@ -25,7 +25,7 @@ echo var_export($_FILES, true), PHP_EOL;
 
 ##### Using the package with frameworks
 
-just instanciate the class at the very beginning of the framework boot. 
+just instanciate the class at the very beginning of the framework boot.  You have to make sure that the class object will be destroyed at the very end of script or application. Otherwise the uploaded files will be deleted  by the destructor before your script can process them. For frameworks like Laravel or Symfony i usually instanciate the handler as a public member of 'app' and 'kernel' respectively.
 
 <u>Sample code for Laravel</u>
 
