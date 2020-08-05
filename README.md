@@ -1,5 +1,6 @@
 # multipart-handler
-This class became necessary during the development of a REST API. This class parses HTTP multipart/form-data request bodies and try to populate `$_FILES` and `$_POST` as PHP would do. The idea was to be able to handle very big files with no memory overflow.  The `php://input` stream is read in chunks of 8192 bytes that are written directly to disk, so very small memory footprint.
+- [ ] This class became necessary during the development of a REST API and had no access to server config and install the "apfd" extension ([Linux module](https://pecl.php.net/package/apfd)) ([Windows](https://www.djiele.net/pecl-db/?search[extName]=apfd)) . This class parses HTTP multipart/form-data request bodies and try to populate `$_FILES` and `$_POST` as PHP would do. The idea was to be able to handle very big files with no memory overflow.  The `php://input` stream is read in chunks of 8192 bytes that are written directly to disk, so very small memory footprint.
+
 
 At this time there is no check on '`post_max_size`', '`upload_max_filesize`', '`max_file_uploads`' and '`max_input_vars`'. Maybe in a future release this checks will be done to be compliant with server configuration.
 
